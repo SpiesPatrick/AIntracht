@@ -1,10 +1,14 @@
 import json
+import os
 
-from openai import OpenAI
+import google.generativeai as genai
 
-client = OpenAI()
+# TODO get API KEY and make global var
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
 def get_bundesliga_tips(spieltag: int):
+
+    model = genai.GenerativeModel("gemini-2.5-pro")
 
     prompt = f"""
     Gib die Tipps für den {spieltag}. Spieltag der 1. Fußball-Bundesliga
@@ -17,14 +21,8 @@ def get_bundesliga_tips(spieltag: int):
     Keine Erklärungen, nur JSON.
     """
 
-    response = client.chat.completions.create(
-        model="gpt-4.1-mini",
-        messages=[{"role": "user", "content": prompt}],
-        temperature=0.3
-    )
-
-    # Rohtext auslesen
-    text = response.choices[0].message.content.strip()
+    response = model.generate_content(prompt)
+    text = response.text.strip()
 
     # JSON parsen
     try:
