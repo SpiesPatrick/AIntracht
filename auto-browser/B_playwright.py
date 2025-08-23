@@ -39,3 +39,31 @@ async def main():
         await browser.close()
 
 asyncio.run(main())
+
+
+
+
+'''
+STEPS
+
+import { test, expect } from '@playwright/test';
+
+test('test', async ({ page }) => {
+  await page.goto('https://www.kicktipp.de/buli-lgh/');
+  await page.getByRole('link', { name: '' }).click();
+  await page.getByRole('textbox', { name: 'E-Mail' }).click();
+  await page.getByRole('textbox', { name: 'E-Mail' }).fill('ai-ntracht@gmx.de');
+  await page.getByRole('textbox', { name: 'Passwort' }).click();
+  await page.getByRole('textbox', { name: 'Passwort' }).fill('geD$Ms#J@3Fzip8ZgHy5');
+  await page.getByRole('button', { name: 'Anmelden' }).click();
+  await page.locator('iframe[title="SP Consent Message"]').contentFrame().getByRole('button', { name: 'Akzeptieren und weiter' }).click();
+  await page.getByRole('link', { name: 'Tippabgabe' }).click();
+  await page.getByRole('row', { name: '1. FC Heidenheim 1846 VfL' }).getByRole('cell').first().click();
+  await page.locator('#spieltippForms_1447474405_heimTipp').click();
+  await page.locator('#spieltippForms_1447474405_heimTipp').fill('0');
+  await page.locator('#spieltippForms_1447474405_gastTipp').click();
+  await page.locator('#spieltippForms_1447474405_gastTipp').fill('1');
+  await page.getByRole('button', { name: 'Tipps speichern' }).click();
+});
+
+'''
