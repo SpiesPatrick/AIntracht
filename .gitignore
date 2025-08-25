@@ -1,3 +1,7 @@
+
+# Config
+config.yaml
+
 # Python Virtual Environment
 venv/
 
