@@ -1,44 +1,66 @@
-import asyncio
 
-from playwright.async_api import async_playwright
+import re
 
-USERNAME = "dein_username"
-PASSWORD = "dein_passwort"
-GRUPPE = "buli-lgh"
-# URL_TIPPABGABE = "https://www.kicktipp.de/buli-lgh/tippabgabe?tippsaisonId=3989016&spieltagIndex={SPIELTAG}"
+import Config
+import yaml
+from playwright.sync_api import Page, expect
 
-# TODO Tippsformat überarbeiten
-TIPPS = {
-    "Bayern vs Dortmund": (2, 1),
-    "Leipzig vs Stuttgart": (1, 1),
-}
 
-async def main():
-    async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=True)  # oder False zum Debuggen
-        page = await browser.new_page()
+def main():
+    test_example(Page)
 
-        # 1. Login
-        await page.goto(f"https://www.kicktipp.de/{GRUPPE}/")
-        await page.fill("input[name=kennung]", USERNAME)
-        await page.fill("input[name=passwort]", PASSWORD)
-        await page.click("button[type=submit]")
+def test_example(page: Page) -> None:
+    SPIELTAG = 2
 
-        # 2. Tippseite öffnen
-        await page.goto(f"https://www.kicktipp.de/{GRUPPE}/tippabgabe")
+    E_MAIL = Config.User.e_mail
+    PASSWORD = Config.User.password
+    GROUPNAME = Config.Kicktipp.group_name
+    SAISON_ID = Config.Kicktipp.saison_id
 
-        # 3. Tipps eintragen (hier müsstest du Mapping bauen)
-        for idx, ((spiel, (home, away))) in enumerate(TIPPS.items(), start=1):
-            await page.fill(f"input[name=match_{idx}_home]", str(home))
-            await page.fill(f"input[name=match_{idx}_away]", str(away))
+    page.goto("https://www.kicktipp.de/{GROUPNAME}/")
+    page.get_by_role("link", name="").click()
+    page.get_by_role("textbox", name="E-Mail").click()
+    page.get_by_role("textbox", name="E-Mail").fill(E_MAIL)
+    page.get_by_role("textbox", name="Passwort").click()
+    page.get_by_role("textbox", name="Passwort").fill(PASSWORD)
+    page.get_by_role("button", name="Anmelden").click()
+    page.locator("iframe[title=\"SP Consent Message\"]").content_frame.get_by_role("button", name="Akzeptieren und weiter").click()
+    # page.get_by_role("link", name="Tippabgabe").click()
+    page.goto(f"https://www.kicktipp.de/{GROUPNAME}/tippabgabe?tippsaisonId={SAISON_ID}&spieltagIndex={SPIELTAG}")
+    # page.locator("#spieltippForms_1447474418_heimTipp").click()
+    page.locator("#spieltippForms_1447474418_heimTipp").fill("4")
+    # page.locator("#spieltippForms_1447474418_gastTipp").click()
+    page.locator("#spieltippForms_1447474418_gastTipp").fill("3")
+    page.get_by_role("button", name="Tipps speichern").click()
+    expect(page.get_by_role("paragraph")).to_contain_text("Die Tipps wurden erfolgreich gespeichert.")
 
-        # 4. Absenden
-        await page.click("button[type=submit]")
+# WHAT CHATTIE SAYS
+# async def main():
+#     async with async_playwright() as p:
+#         browser = await p.chromium.launch(headless=True)  # oder False zum Debuggen
+#         page = await browser.new_page()
 
-        print("Tipps erfolgreich eingetragen ✅")
-        await browser.close()
+#         # 1. Login
+#         await page.goto(f"https://www.kicktipp.de/{GRUPPE}/tippabgabe?tippsaisonId=3989016&spieltagIndex=1")
+#         await page.fill("input[name=kennung]", USERNAME)
+#         await page.fill("input[name=passwort]", PASSWORD)
+#         await page.click("button[type=submit]")
 
-asyncio.run(main())
+#         # 2. Tippseite öffnen
+#         await page.goto(f"https://www.kicktipp.de/{GRUPPE}/tippabgabe")
+
+#         # 3. Tipps eintragen (hier müsstest du Mapping bauen)
+#         for idx, ((spiel, (home, away))) in enumerate(TIPPS.items(), start=1):
+#             await page.fill(f"input[name=match_{idx}_home]", str(home))
+#             await page.fill(f"input[name=match_{idx}_away]", str(away))
+
+#         # 4. Absenden
+#         await page.click("button[type=submit]")
+
+#         print("Tipps erfolgreich eingetragen ✅")
+#         await browser.close()
+
+# asyncio.run(main())
 
 
 
@@ -65,5 +87,29 @@ test('test', async ({ page }) => {
   await page.locator('#spieltippForms_1447474405_gastTipp').fill('1');
   await page.getByRole('button', { name: 'Tipps speichern' }).click();
 });
+
+
+
+import re
+from playwright.sync_api import Page, expect
+
+
+def test_example(page: Page) -> None:
+    page.goto("https://www.kicktipp.de/buli-lgh/")
+    page.get_by_role("link", name="").click()
+    page.get_by_role("textbox", name="E-Mail").click()
+    page.get_by_role("textbox", name="E-Mail").fill("ai-ntracht@gmx.de")
+    page.get_by_role("textbox", name="Passwort").click()
+    page.get_by_role("textbox", name="Passwort").fill("geD$Ms#J@3Fzip8ZgHy5")
+    page.get_by_role("button", name="Anmelden").click()
+    page.locator("iframe[title=\"SP Consent Message\"]").content_frame.get_by_role("button", name="Akzeptieren und weiter").click()
+    page.get_by_role("link", name="Tippabgabe").click()
+    page.locator("#spieltippForms_1447474418_heimTipp").click()
+    page.locator("#spieltippForms_1447474418_heimTipp").click()
+    page.locator("#spieltippForms_1447474418_heimTipp").fill("4")
+    page.locator("#spieltippForms_1447474418_gastTipp").click()
+    page.locator("#spieltippForms_1447474418_gastTipp").fill("3")
+    page.get_by_role("button", name="Tipps speichern").click()
+    expect(page.get_by_role("paragraph")).to_contain_text("Die Tipps wurden erfolgreich gespeichert.")
 
 '''
