@@ -2,8 +2,9 @@
 # Config
 config.yaml
 
-# Python Virtual Environment
+# Python
 venv/
+__pycache__/
 
 # Node
 node_modules
