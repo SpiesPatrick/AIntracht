@@ -15,7 +15,7 @@ class Kicktipp(BaseModel):
 
 class Config(BaseModel):
     user: User
-    Kicktipp: Kicktipp
+    kicktipp: Kicktipp
 
 def load_config() -> Config:
     script_path = Path(__file__).resolve()
