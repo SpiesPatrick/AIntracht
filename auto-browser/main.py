@@ -68,6 +68,7 @@ def main():
         '''
         page.get_by_role('button', name='Tipps speichern').click()
         expect(page.get_by_role('paragraph')).to_contain_text('Die Tipps wurden erfolgreich gespeichert.')
+        # TODO 'Es wurden keine Änderungen gespeichert! Es wurden die gleichen Daten übermittelt, die bereits gespeichert sind.'
 
 
 if __name__ == '__main__':
