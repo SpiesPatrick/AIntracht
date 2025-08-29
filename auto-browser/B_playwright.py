@@ -23,17 +23,17 @@ def main():
         except Exception as e:
             return
 
-        page.goto("https://www.kicktipp.de/{GROUPNAME}/")
+        page.goto('https://www.kicktipp.de/{GROUPNAME}/')
 
         '''
         1) Login
         '''
-        page.get_by_role("link", name="").click()
-        page.get_by_role("textbox", name="E-Mail").click()
-        page.get_by_role("textbox", name="E-Mail").fill(E_MAIL)
-        page.get_by_role("textbox", name="Passwort").click()
-        page.get_by_role("textbox", name="Passwort").fill(PASSWORD)
-        page.get_by_role("button", name="Anmelden").click()
+        page.get_by_role('link', name='').click()
+        page.get_by_role('textbox', name='E-Mail').click()
+        page.get_by_role('textbox', name='E-Mail').fill(E_MAIL)
+        page.get_by_role('textbox', name='Passwort').click()
+        page.get_by_role('textbox', name='Passwort').fill(PASSWORD)
+        page.get_by_role('button', name='Anmelden').click()
 
         '''
         2) Navigate to Tipppage, depending on SPIELTAG
@@ -43,19 +43,31 @@ def main():
         except Exception:
             print('No I-Frame found')
         # page.get_by_role("link", name="Tippabgabe").click()
-        page.goto(f"https://www.kicktipp.de/{GROUPNAME}/tippabgabe?tippsaisonId={SAISON_ID}&spieltagIndex={SPIELTAG}")
+        page.goto(f'https://www.kicktipp.de/{GROUPNAME}/tippabgabe?tippsaisonId={SAISON_ID}&spieltagIndex={SPIELTAG}')
 
 
         '''
         3) Filling the tips
         '''
-        page.getByRole('row', { 'name': '1. FC Heidenheim 1846 VfL' }).getByRole('cell').first().click()
-        # # page.locator("#spieltippForms_1447474418_heimTipp").click()
-        # page.locator("#spieltippForms_1447474418_heimTipp").fill("4")
-        # # page.locator("#spieltippForms_1447474418_gastTipp").click()
-        # page.locator("#spieltippForms_1447474418_gastTipp").fill("3")
-        page.get_by_role("button", name="Tipps speichern").click()
-        expect(page.get_by_role("paragraph")).to_contain_text("Die Tipps wurden erfolgreich gespeichert.")
+        rows = page.locator('table#tippabgabeSpiele tr')
+
+        for row in rows:
+            heim = row.locator('.nw cell col1').inner_text()
+            gast = row.locator('.nw cell col2').inner_text()
+
+            '''
+            TODO hier muss ich die Tipps/Tore aus meinem YAML auslesen
+            und richtig definieren
+            '''
+
+            row.locator('input[name*="heimTipp"]').fill(tore_heim)
+            row.locator('input[name*="gastTipp"]').fill(tore_gast)
+
+        '''
+        4) Submit und check if saved
+        '''
+        page.get_by_role('button', name='Tipps speichern').click()
+        expect(page.get_by_role('paragraph')).to_contain_text('Die Tipps wurden erfolgreich gespeichert.')
 
 
 if __name__ == '__main__':
