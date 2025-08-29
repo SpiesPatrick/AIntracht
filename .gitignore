@@ -1,4 +1,7 @@
 
+# My personal "ignore" tag
+*.ignore.*
+
 # AI
 promt.txt
 tipps.yaml
