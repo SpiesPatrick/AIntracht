@@ -3,6 +3,7 @@ import os
 
 import google.generativeai as genai
 from google.generativeai.types import HarmCategory
+from prompt import get_prompt_for_spieltag
 
 api_key=os.getenv("GEMINI_API_KEY")
 if not api_key:
@@ -18,17 +19,7 @@ def get_bundesliga_tips(spieltag: int):
 
     model = genai.GenerativeModel("gemini-2.5-pro")
 
-    prompt = f"""
-    Gib die Tipps für den {spieltag}. Spieltag der 1. Fußball-Bundesliga
-    im JSON-Format zurück.
-    Format:
-    {{
-      "TeamA vs TeamB": "ToreA:ToreB",
-      ...
-    }}
-    Keine Erklärungen, nur JSON.
-    """
-
+    prompt = get_prompt_for_spieltag(spieltag=spieltag)
 
     try:
         safety_settings = {
