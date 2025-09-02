@@ -1,0 +1,11 @@
+{
+    "contents": [
+        {
+            "parts": [
+                {
+                    "text": "Gib die Tipps für den 1. Spieltag der 1. Fußball-Bundesliga der aktuellen Saison 2025/2026 im JSON-Format zurück. Format: { 'TeamA vs TeamB': 'ToreA:ToreB', ... } Keine Erklärungen, nur JSON."
+                }
+            ]
+        }
+    ]
+}
