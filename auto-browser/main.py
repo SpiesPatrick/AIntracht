@@ -1,7 +1,7 @@
 
 import re
 
-import Config as conf
+import config as conf
 import yaml
 from playwright.sync_api import expect, sync_playwright
 
