@@ -3,6 +3,7 @@ import json
 from datetime import datetime
 
 import requests
+import yaml
 
 
 def get_table():
@@ -25,15 +26,25 @@ def get_table():
         }
         for item in data
     ]
-    return json.dumps(reduced_data, indent=2, ensure_ascii=False)
+    return yaml.dump(data=reduced_data, indent=2)
 
-def get_match_day():
+def get_match_day_data():
     '''
     return integer representing the next matchday
     '''
     response = requests.get('https://api.openligadb.de/getmatchdata/bl1')
     data = response.json()
-    return data[0]['group']['groupOrderID']
+    reduced_data = {
+        'spieltag': data[0]['group']['groupOrderID'],
+        'begegnungen': [
+            {
+                'heim_mannschaft': item.get('team1').get('teamName'),
+                'gast_mannschaft': item.get('team2').get('teamName')
+            }
+            for item in data
+        ]
+    }
+    return reduced_data
 
 def get_team_names():
     '''
@@ -62,7 +73,9 @@ def generate_promt():
     '''
     return the complete prompt
     '''
-    match_day = get_match_day()
+    match_day_data = get_match_day_data()
+    match_day = match_day_data.get('spieltag')
+    match_day_games = yaml.dump(data=match_day_data.get('begegnungen'), indent=2)
     team_names = get_team_names()
     table = get_table()
 
@@ -85,9 +98,13 @@ def generate_promt():
             '      gast_tore: 2 # Integer\n' \
             '    - ...\n' \
             '\n' \
-            'Die aktuelle Tabelle der 1. Bundesliga sieht wie folgt aus (JSON-Format):\n' \
+            'Die aktuelle Tabelle der 1. Bundesliga sieht wie folgt aus (YAML-Format):\n' \
            f'{table}\n' \
             '\n' \
+           f'Folgende Begegnungen gibt es am {match_day}. Spieltag:\n' \
+            '\n' \
+            'Die sollte dir dazu dienen, die Leistungen der Teams einzuschätzen.\n' \
+           f'{match_day_games}\n' \
             '\n' \
             'Wichtige Punkte:\n' \
             '- Alle Spiele des Spieltags müssen enthalten sein.\n' \
