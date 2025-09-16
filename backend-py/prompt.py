@@ -80,10 +80,6 @@ def generate_promt():
     table = get_table()
 
     return f'Gib mir bitte die Tipps für den {match_day}. Spieltag der 1. Bundesliga im YAML-Format.\n' \
-            'Verwende genau die folgenden Team-Namen (keine Abweichungen, keine Kürzungen):\n' \
-            '\n' \
-            'teams:\n' \
-           f'{team_names}\n' \
             '\n' \
             'Das YAML soll so aufgebaut sein:\n' \
             '\n' \
@@ -103,12 +99,15 @@ def generate_promt():
             '\n' \
            f'Folgende Begegnungen gibt es am {match_day}. Spieltag:\n' \
             '\n' \
-            'Die sollte dir dazu dienen, die Leistungen der Teams einzuschätzen.\n' \
            f'{match_day_games}\n' \
+            'Die sollte dir dazu dienen, die Leistungen der Teams einzuschätzen.\n' \
             '\n' \
+            'Bitte verwende die Namen in der folgenden Liste und ersetze gegebenenfalls den Namen (keine Abweichungen, keine Kürzungen):\n' \
+            'teams:\n' \
+           f'{team_names}\n' \
             'Wichtige Punkte:\n' \
             '- Alle Spiele des Spieltags müssen enthalten sein.\n' \
-            '- Team-Namen exakt so wie oben in der Liste (keine Variationen).\n' \
+            '- Team-Namen exakt so wie oben in der Liste (keine Variationen, egal was in der Tabelle oder im Match-Day steht!!!).\n' \
             '\n' \
 
 def main():
