@@ -2,10 +2,11 @@
 import re
 import time
 
-import config as conf
-import tipps as gen_tipps
 import yaml
 from playwright.sync_api import expect, sync_playwright
+
+import pythonmodules.config as conf
+import pythonmodules.tipps as gen_tipps
 
 
 def main():
@@ -77,8 +78,6 @@ def main():
             row = rows.nth(i)
             heim = row.locator('.nw.cell.col1').inner_text()
             gast = row.locator('.nw.cell.col2').inner_text()
-            # heim = row.locator('.td.col1').inner_text()
-            # gast = row.locator('.td.col2').inner_text()
 
             '''
             TODO hier muss ich die Tipps/Tore aus meinem YAML auslesen
@@ -113,4 +112,5 @@ def sortBySpieltag(e):
   return e.spieltag
 
 if __name__ == '__main__':
+    main()
     main()

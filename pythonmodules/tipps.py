@@ -30,3 +30,7 @@ def load_tipp() -> Tipps:
     with open(tipps_path, 'r') as f:
         data = yaml.safe_load(f)
     return Tipps(**data)
+
+def convert_yaml(obj) -> Tipps:
+    data = yaml.dump(data=obj)
+    return Tipps(**data)

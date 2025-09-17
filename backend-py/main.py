@@ -1,12 +1,13 @@
 
-import config
 import google.generativeai as genai
 import prompt
 import yaml
 from google.generativeai.types import HarmCategory
 
+import pythonmodules.config as config
 
-def get_bundesliga_tips(spieltag: int):
+
+def get_bundesliga_tips():
     '''
     Holt Bundesliga-Tipps vom Gemini-Modell und gibt sie als JSON zurück.
     '''
@@ -55,14 +56,18 @@ def get_bundesliga_tips(spieltag: int):
 
     return tips
 
+def safe_bundesliga_tips_into_db(tips):
+    # @TODO continue here
+    pass
 
 def main():
     try:
-        tips = get_bundesliga_tips(spieltag=1)
+        tips = get_bundesliga_tips()
         print(tips)
     except Exception as e:
         print('Skript konnte nicht erfolgreich ausgeführt werden: ')
         print(e)
 
 if __name__ == "__main__":
+    main()
     main()
