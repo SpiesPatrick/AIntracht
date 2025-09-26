@@ -4,13 +4,12 @@ import prompt
 import yaml
 from google.generativeai.types import HarmCategory
 
+import datacon
 import pythonmodules.config as config
 
 
 def get_bundesliga_tips():
-    '''
-    Holt Bundesliga-Tipps vom Gemini-Modell und gibt sie als JSON zurück.
-    '''
+    # Lade Config
     conf = config.load_config()
 
     api_key = conf.gemini.api_key
@@ -26,11 +25,12 @@ def get_bundesliga_tips():
     model = genai.GenerativeModel(bot_model)
 
     try:
-        p = prompt.generate_promt()
+        # Generiere den Prompt
+        p = prompt.generate_prompt()
         if not p:
             raise NotImplementedError('Prompt wurde nicht generiert')
 
-        response = model.generate_content(prompt.generate_promt())
+        response = model.generate_content(p)
 
         if not response.parts:
             raise ValueError(f'Antwort ist leer. Finish Reason: {response.candidates[0].finish_reason}')
@@ -61,6 +61,8 @@ def safe_bundesliga_tips_into_db(tips):
     pass
 
 def main():
+    if ()
+
     try:
         tips = get_bundesliga_tips()
         print(tips)
@@ -69,5 +71,4 @@ def main():
         print(e)
 
 if __name__ == "__main__":
-    main()
     main()
