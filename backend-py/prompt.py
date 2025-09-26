@@ -69,7 +69,7 @@ def get_team_names():
             '  - "1. FC Köln"\n' \
             '  - "SC Freiburg"\n' \
 
-def generate_promt():
+def generate_prompt():
     '''
     return the complete prompt
     '''
@@ -111,7 +111,7 @@ def generate_promt():
             '\n' \
 
 def main():
-    prompt = generate_promt()
+    prompt = generate_prompt()
     print(prompt)
 
 if __name__ == '__main__':
