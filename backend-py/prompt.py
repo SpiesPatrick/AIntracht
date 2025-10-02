@@ -90,8 +90,8 @@ def generate_promt():
             '    begegnungen:\n' \
             '    - heim_mannschaft: "FC Bayern München" # Name der Heimmannschaft\n' \
             '      gast_mannschaft: "Werder Bremen" # Name der Gastmannschaft\n' \
-            '      heim_tore: 0 # Integer\n' \
-            '      gast_tore: 2 # Integer\n' \
+            '      heim_tore: 0 # Unbedingt als Integer angeben!\n' \
+            '      gast_tore: 2 # Unbedingt als Integer angeben!\n' \
             '    - ...\n' \
             '\n' \
             'Die aktuelle Tabelle der 1. Bundesliga sieht wie folgt aus (YAML-Format):\n' \
