@@ -17,10 +17,18 @@ class Gemini(BaseModel):
     api_key: str
     bot_model: str
 
+class Postgres(BaseModel):
+    db_name: str
+    db_schema: str
+    user_name: str
+    password: str
+    host: str
+
 class Config(BaseModel):
-    gemini: Gemini
     user: User
     kicktipp: Kicktipp
+    gemini: Gemini
+    postgres: Postgres
 
 def load_config() -> Config:
     script_path = Path(__file__).resolve()
