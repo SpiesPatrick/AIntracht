@@ -10,7 +10,7 @@ tipps.yaml
 config.yaml
 
 # Python
-venv/
+.venv/
 __pycache__/
 
 # Node
