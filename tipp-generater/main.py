@@ -1,17 +1,14 @@
 
+import datacon
 import google.generativeai as genai
 import prompt
 import yaml
 from google.generativeai.types import HarmCategory
 
-import datacon
 import pythonmodules.config as config
 
 
-def get_bundesliga_tips():
-    # Lade Config
-    conf = config.load_config()
-
+def get_bundesliga_tips(conf):
     api_key = conf.gemini.api_key
     if not api_key:
         raise ValueError('GEMINI_API_KEY wurde nicht in der Config gefunden.')
@@ -61,10 +58,16 @@ def safe_bundesliga_tips_into_db(tips):
     pass
 
 def main():
-    if ()
+    conf = config.load_config()
+
+    con = datacon.connection(dbname=conf.postgres.db_name, user=conf.postgres.user_name, password=conf.postgres.password, host=conf.postgres.host)
+
+    if datacon.check_if_spieltag_and_saison_already_exists():
+        # @TODO Logging
+        exit()
 
     try:
-        tips = get_bundesliga_tips()
+        tips = get_bundesliga_tips(conf=conf)
         print(tips)
     except Exception as e:
         print('Skript konnte nicht erfolgreich ausgeführt werden: ')
