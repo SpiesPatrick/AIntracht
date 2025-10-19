@@ -103,10 +103,8 @@ def main():
         4) Submit und check if saved
         '''
         page.get_by_role('button', name='Tipps speichern').click()
-        expect(page.get_by_role('paragraph')).to_contain_text([
-            'Die Tipps wurden erfolgreich gespeichert.',
-            'Es wurden keine Änderungen gespeichert! Es wurden die gleichen Daten übermittelt, die bereits gespeichert sind.'
-        ])
+        expect(page.get_by_role('paragraph')).to_contain_text('Die Tipps wurden erfolgreich gespeichert.')
+
 
 def sortBySpieltag(e):
   return e.spieltag
