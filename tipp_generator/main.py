@@ -1,10 +1,11 @@
 
-import datacon
 import google.generativeai as genai
-import prompt
 import yaml
 from google.generativeai.types import HarmCategory
 
+import pythonmodules.config as config
+import tipp_generator.datacon as datacon
+import tipp_generator.prompt as prompt
 from pythonmodules import config
 
 
@@ -70,8 +71,8 @@ def main():
         print('Unable to connect to database')
         exit()
 
-    with conn.cusor() as curs:
-        if datacon.check_if_spieltag_and_saison_already_exists():
+    with conn.cursor() as cur:
+        if datacon.check_if_spieltag_and_saison_already_exists(cur=cur, ):
             # @TODO Logging
             print('"Spieltag" in this saison already exists in database')
             exit()
