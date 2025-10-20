@@ -58,20 +58,30 @@ def safe_bundesliga_tips_into_db(tips):
     pass
 
 def main():
-    conf = config.load_config()
-
-    con = datacon.connection(dbname=conf.postgres.db_name, user=conf.postgres.user_name, password=conf.postgres.password, host=conf.postgres.host)
-
-    if datacon.check_if_spieltag_and_saison_already_exists():
-        # @TODO Logging
+    try:
+        conf = config.load_config()
+    except:
+        print('Unable to load config')
         exit()
 
     try:
-        tips = get_bundesliga_tips(conf=conf)
-        print(tips)
-    except Exception as e:
-        print('Skript konnte nicht erfolgreich ausgeführt werden: ')
-        print(e)
+        conn = datacon.connection(dbname=conf.postgres.db_name, user=conf.postgres.user_name, password=conf.postgres.password, host=conf.postgres.host)
+    except:
+        print('Unable to connect to database')
+        exit()
+
+    with conn.cusor() as curs:
+        if datacon.check_if_spieltag_and_saison_already_exists():
+            # @TODO Logging
+            print('"Spieltag" in this saison already exists in database')
+            exit()
+        try:
+            tips = get_bundesliga_tips(conf=conf)
+            print(tips)
+            safe_bundesliga_tips_into_db(tips)
+        except Exception as e:
+            print('Skript konnte nicht erfolgreich ausgeführt werden: ')
+            print(e)
 
 if __name__ == "__main__":
     main()
