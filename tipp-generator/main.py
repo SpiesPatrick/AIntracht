@@ -5,7 +5,7 @@ import prompt
 import yaml
 from google.generativeai.types import HarmCategory
 
-import pythonmodules.config as config
+from pythonmodules import config
 
 
 def get_bundesliga_tips(conf):

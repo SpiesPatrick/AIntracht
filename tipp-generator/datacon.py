@@ -1,6 +1,6 @@
 import psycopg2
 
-import pythonmodules.tipps as tipps
+from pythonmodules import tipps
 
 
 def connection(dbname, user, password, host):
@@ -76,4 +76,5 @@ def check_if_spieltag_and_saison_already_exists(cur, jahr: str, spieltag: int) -
     # # Make the changes to the database persistent
     # conn.commit()    # conn.commit()
     # # Make the changes to the database persistent
+    # conn.commit()    # conn.commit()
     # conn.commit()    # conn.commit()
