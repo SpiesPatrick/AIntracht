@@ -6,11 +6,24 @@ import requests
 import yaml
 
 
+def get_saison_year():
+    '''
+    calculating the current saison year
+    '''
+    return datetime.now().year if datetime.now().month >= 7 else datetime.now().year - 1
+
+def get_match_day():
+    '''
+    get the current matchday
+    '''
+    response = requests.get('https://api.openligadb.de/getmatchdata/bl1')
+    return response.json()[0]['group']['groupOrderID']
+
 def get_table():
     '''
     return a json or yaml (not sure yet) of the actual table situation
     '''
-    year = datetime.now().year if datetime.now().month >= 7 else datetime.now().year - 1
+    year = get_saison_year()
     response = requests.get(f'https://api.openligadb.de/getbltable/bl1/{year}')
     data = response.json()
     reduced_data = [

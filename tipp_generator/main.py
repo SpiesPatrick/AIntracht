@@ -71,8 +71,11 @@ def main():
         print('Unable to connect to database')
         exit()
 
+    saison_year = prompt.get_saison_year()
+    match_day = prompt.get_match_day()
+
     with conn.cursor() as cur:
-        if datacon.check_if_spieltag_and_saison_already_exists(cur=cur, ):
+        if datacon.check_if_spieltag_and_saison_already_exists(cur=cur, jahr=saison_year, spieltag=match_day):
             # @TODO Logging
             print('"Spieltag" in this saison already exists in database')
             exit()
