@@ -1,5 +1,3 @@
 source .venv/bin/activate
-cd tipp-sender
-python3 main.py
-cd ..
+python3 -m tipp_sender.main
 deactivate
