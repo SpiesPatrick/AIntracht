@@ -3,52 +3,58 @@ import psycopg2
 from pythonmodules import tipps
 
 
-def connection(dbname, user, password, host):
-    return  psycopg2.connect(dbname=dbname, user=user, password=password, host=host, port=5432)
+class Database:
 
-def match_day_is_already_tipped(cur, spieltag):
-    cur.execute('SELECT bereits_getippt FROM aintracht.spiele WHERE spieltag = %s', (spieltag,))
-    return cur.fetchone()[0]
+    def __init__(self, dbname, user, password, host, port=5432):
+        self.dbname = dbname
+        self.user = user
+        self.password = password
+        self.host = host
+        self.port = port
 
-def safe_match_day_into_db(cur, tips_string):
-    tips_yaml = tipps.convert_yaml(tips_string)
-    saison = tips_yaml.saison
-    saison_id = get_or_create_saison(cur, saison.jahr)
+    def connect(self):
+        return  psycopg2.connect(dbname=self.dbname, user=self.user, password=self.password, host=self.host, port=self.port)
 
-def get_or_create_spieltag(cur, saison_id: int, spieltag: int) -> int:
-    '''
-    Holt die ID eines Spieltags oder erstellt diese, falls noch nicht vorhanden.
-    Gibt die ID als int zurück.
-    '''
+    def match_day_is_already_tipped(cur, saison, spieltag):
+        cur.execute('SELECT bereits_getippt FROM aintracht.spiele WHERE saison = %s AND spieltag = %s', (spieltag, saison))
+        return cur.fetchone()[0]
 
-def get_or_create_saison(cur, jahr: str) -> int:
-    '''
-    Holt die ID einer Saison oder erstellt sie, falls noch nicht vorhanden.
-    Gibt die ID als int zurück.
-    '''
-    cur.execute('''
-        INSERT INTO aintracht.saison (jahr)
-        VALUES (%s)
-        ON CONFLICT (jahr) DO UPDATE SET jahr = EXCLUDED.jahr
-        RETURNING id;
-    ''', (jahr,))
-    saison_id = cur.fetchone()[0]
-    return saison_id
+    def safe_match_day_into_db(cur, tips_string):
+        tips_yaml = tipps.convert_yaml(tips_string)
+        saison = tips_yaml.saison
+        create_saison_if_not_exists(cur, saison.jahr)
 
-def check_if_spieltag_and_saison_already_exists(cur, jahr: str, spieltag: int) -> bool:
-    '''
-    Überprüfe ob bereits ein Tipp in der Datenbank hinterlegt wurde.
-    '''
-    cur.execute('''
-    SELECT EXISTS (
-        SELECT 1 FROM aintracht.spiele spiele
-        JOIN aintracht.saison saison ON spiele.saison_id = saison.id
-        WHERE saison.jahr = %s
-        AND spiele.spieltag = %s
-    );
-    ''', (jahr, spieltag))
-    exists = cur.fetchone()[0]
-    return exists
+    def create_spieltag(cur, saison: int, spieltag: int) -> int:
+        '''
+        Holt die ID eines Spieltags oder erstellt diese, falls noch nicht vorhanden.
+        Gibt die ID als int zurück.
+        '''
+
+    def create_saison_if_not_exists(cur, saison: int):
+        '''
+        Holt die ID einer Saison oder erstellt sie, falls noch nicht vorhanden.
+        Gibt die ID als int zurück.
+        '''
+        cur.execute('''
+            INSERT INTO aintracht.spiele (saison)
+            VALUES (%s)
+            ON CONFLICT (jahr) DO UPDATE SET saison = EXCLUDED.saison;
+        ''', (saison,))
+
+    def check_if_spieltag_and_saison_already_exists(cur, jahr: str, spieltag: int) -> bool:
+        '''
+        Überprüfe ob bereits ein Tipp in der Datenbank hinterlegt wurde.
+        '''
+        cur.execute('''
+        SELECT EXISTS (
+            SELECT 1 FROM aintracht.spiele spiele
+            JOIN aintracht.saison saison ON spiele.saison_id = saison.id
+            WHERE saison.jahr = %s
+            AND spiele.spieltag = %s
+        );
+        ''', (jahr, spieltag))
+        exists = cur.fetchone()[0]
+        return exists
 
     # cur.execute("SELECT heim, gast, tipp_heim, tipp_gast FROM tipps WHERE spiel_id=%s", (1447474424,))
     # row = cur.fetchone()
