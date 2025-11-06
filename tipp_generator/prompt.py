@@ -96,16 +96,14 @@ def generate_prompt():
             '\n' \
             'Das YAML soll so aufgebaut sein:\n' \
             '\n' \
-            'saison:\n' \
-            '  jahr: "25/26"\n' \
-            '  spiele:\n' \
-            '  - spieltag: 3 # Integer\n' \
-            '    begegnungen:\n' \
-            '    - heim_mannschaft: "FC Bayern München" # Name der Heimmannschaft\n' \
-            '      gast_mannschaft: "Werder Bremen" # Name der Gastmannschaft\n' \
-            '      heim_tore: 0 # Unbedingt als Integer angeben!\n' \
-            '      gast_tore: 2 # Unbedingt als Integer angeben!\n' \
-            '    - ...\n' \
+            'saison: 25 # Unbedingt als Integer angeben! Lautet die Saison "25/26", so nimmst du die kleinere Zahl, also 25 \n' \
+            'spieltag: 3 # Unbedingt als Integer angeben!\n' \
+            'begegnungen:\n' \
+            '- heim_mannschaft: "FC Bayern München" # Name der Heimmannschaft\n' \
+            '  gast_mannschaft: "Werder Bremen" # Name der Gastmannschaft\n' \
+            '  heim_tore: 0 # Unbedingt als Integer angeben!\n' \
+            '  gast_tore: 2 # Unbedingt als Integer angeben!\n' \
+            '- ...\n' \
             '\n' \
             'Die aktuelle Tabelle der 1. Bundesliga sieht wie folgt aus (YAML-Format):\n' \
            f'{table}\n' \
