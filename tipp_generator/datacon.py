@@ -3,7 +3,7 @@ import psycopg2
 from pythonmodules import tipps
 
 
-class Database:
+class Datacon:
 
     def __init__(self, dbname, user, password, host, port=5432):
         self.dbname = dbname
