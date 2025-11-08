@@ -4,12 +4,12 @@ import yaml
 from google.generativeai.types import HarmCategory
 
 import pythonmodules.config as config
-import tipp_generator.datacon as datacon
-import tipp_generator.prompt as prompt
 from pythonmodules import config
+from tipp_generator.datacon import Datacon
+from tipp_generator.prompt import Prompt
 
 
-def get_bundesliga_tips(conf):
+def get_bundesliga_tips(conf: config.Config, prompt: Prompt):
     api_key = conf.gemini.api_key
     if not api_key:
         raise ValueError('GEMINI_API_KEY wurde nicht in der Config gefunden.')
@@ -59,6 +59,10 @@ def safe_bundesliga_tips_into_db(tips):
     pass
 
 def main():
+
+    datacon = Datacon()
+    prompt = Prompt()
+
     try:
         conf = config.load_config()
     except:
@@ -88,4 +92,5 @@ def main():
             print(e)
 
 if __name__ == "__main__":
+    main()
     main()
