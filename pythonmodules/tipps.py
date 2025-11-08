@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 
 import yaml
 from pydantic import BaseModel
@@ -12,15 +12,13 @@ class Begegnungen(BaseModel):
     gast_tore: int
 
 class Spiele(BaseModel):
+    saison: int
     spieltag: int
+    getippt: Optional[bool] = None
     begegnungen: List[Begegnungen]
 
-class Saison(BaseModel):
-    jahr: str
-    spiele: List[Spiele]
-
 class Tipps(BaseModel):
-    saison: Saison
+    spiele: Spiele
 
 def load_tipp() -> Tipps:
     script_path = Path(__file__).resolve()
