@@ -8,16 +8,13 @@ import yaml
 
 class Prompt:
 
-    # def __init__(self):
-    #     pass
-
-    def get_saison_year():
+    def get_saison_year(self):
         '''
         calculating the current saison year
         '''
         return datetime.now().year if datetime.now().month >= 7 else datetime.now().year - 1
 
-    def get_match_day():
+    def get_match_day(self):
         '''
         get the current matchday
         '''
@@ -46,7 +43,7 @@ class Prompt:
         ]
         return yaml.dump(data=reduced_data, indent=2)
 
-    def get_match_day_data():
+    def get_match_day_data(self):
         '''
         return integer representing the next matchday
         '''
@@ -64,7 +61,7 @@ class Prompt:
         }
         return reduced_data
 
-    def get_team_names():
+    def get_team_names(self):
         '''
         return string with all team names, the way I want (and need) it
         '''
@@ -101,14 +98,15 @@ class Prompt:
                 '\n' \
                 'Das YAML soll so aufgebaut sein:\n' \
                 '\n' \
-                'saison: 25 # Unbedingt als Integer angeben! Lautet die Saison "25/26", so nimmst du die kleinere Zahl, also 25 \n' \
-                'spieltag: 3 # Unbedingt als Integer angeben!\n' \
-                'begegnungen:\n' \
-                '- heim_mannschaft: "FC Bayern München" # Name der Heimmannschaft\n' \
-                '  gast_mannschaft: "Werder Bremen" # Name der Gastmannschaft\n' \
-                '  heim_tore: 0 # Unbedingt als Integer angeben!\n' \
-                '  gast_tore: 2 # Unbedingt als Integer angeben!\n' \
-                '- ...\n' \
+                'spiele:\n' \
+                '  saison: 2025 # Unbedingt als Integer angeben! Lautet die Saison "25/26", so nimmst du die kleinere Zahl, also 2025 \n' \
+                '  spieltag: 3 # Unbedingt als Integer angeben!\n' \
+                '  begegnungen:\n' \
+                '  - heim_mannschaft: "FC Bayern München" # Name der Heimmannschaft\n' \
+                '    gast_mannschaft: "Werder Bremen" # Name der Gastmannschaft\n' \
+                '    heim_tore: 0 # Unbedingt als Integer angeben!\n' \
+                '    gast_tore: 2 # Unbedingt als Integer angeben!\n' \
+                '  - ...\n' \
                 '\n' \
                 'Die aktuelle Tabelle der 1. Bundesliga sieht wie folgt aus (YAML-Format):\n' \
             f'{table}\n' \
