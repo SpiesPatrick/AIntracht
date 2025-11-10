@@ -8,7 +8,7 @@ import yaml
 from playwright.sync_api import expect, sync_playwright
 
 
-def main():
+def send():
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=False) # True =^ unsichtbar
         page = browser.new_page()
@@ -110,6 +110,8 @@ def main():
 def sortBySpieltag(e):
   return e.spieltag
 
+def main():
+    send()
+
 if __name__ == '__main__':
-    main()
     main()
