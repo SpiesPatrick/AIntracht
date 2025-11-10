@@ -14,10 +14,6 @@ class Datacon:
     def connect(self):
         return  psycopg2.connect(dbname=self.dbname, user=self.user, password=self.password, host=self.host, port=self.port)
 
-    def match_day_is_already_tipped(cur, saison, spieltag):
-        cur.execute('SELECT bereits_getippt FROM aintracht.spiele WHERE saison = %s AND spieltag = %s', (spieltag, saison))
-        return cur.fetchone()[0]
-
     def safe_match_day_into_db(self, cur, tipps_string):
         tipps_yaml = tipps.convert_yaml(tipps_string)
         saison = tipps_yaml.spiele.saison
@@ -50,7 +46,7 @@ class Datacon:
                 spieltag
             ))
 
-    def match_day_already_exists(cur, saison: int, spieltag: int) -> bool:
+    def match_day_already_exists(self, cur, saison: int, match_day: int) -> bool:
         '''
         Überprüfe ob bereits ein Tipp in der Datenbank hinterlegt wurde.
         '''
@@ -60,6 +56,6 @@ class Datacon:
             WHERE spiele.saison = %s
             AND spiele.spieltag = %s
         );
-        ''', (saison, spieltag))
+        ''', (saison, match_day))
         exists = cur.fetchone()[0]
         return exists
