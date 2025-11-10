@@ -1,14 +1,14 @@
 
 import google.generativeai as genai
 import yaml
-from google.generativeai.types import HarmCategory
+# from google.generativeai.types import HarmCategory
 # import pythonmodules.config as config
 from models import config
 from services.datacon import Datacon
 from services.prompt import Prompt
 
 
-def get_bundesliga_tips(conf: config.Config, prompt: Prompt):
+def get_bundesliga_tipps(conf: config.Config, prompt: Prompt):
     api_key = conf.gemini.api_key
     if not api_key:
         raise ValueError('GEMINI_API_KEY wurde nicht in der Config gefunden.')
@@ -40,8 +40,7 @@ def get_bundesliga_tips(conf: config.Config, prompt: Prompt):
         if text.startswith('```yaml'):
             text = text.strip('```yaml').strip()
 
-        # tips = yaml.dump(data=text, indent=2)
-        tips = text
+        tipps = text
 
     except AttributeError:
         print('Konnte nicht auf .text zugreifen. Möglicherweise wurde die Anfrage blockiert.')
@@ -51,45 +50,45 @@ def get_bundesliga_tips(conf: config.Config, prompt: Prompt):
         print(f'Ein unerwarteter Fehler ist aufgetreten: {e}')
         raise
 
-    return tips
+    return tipps
 
-def safe_bundesliga_tips_into_db(tips):
-    # @TODO continue here
-    pass
-
-def main():
-
-    datacon = Datacon()
-    prompt = Prompt()
-
+def generate():
     try:
         conf = config.load_config()
-    except:
+    except e:
         print('Unable to load config')
+        print(e)
         exit()
 
-    try:
-        conn = datacon.connection(dbname=conf.postgres.db_name, user=conf.postgres.user_name, password=conf.postgres.password, host=conf.postgres.host)
-    except:
-        print('Unable to connect to database')
-        exit()
+    datacon = Datacon(dbname=conf.postgres.db_name,
+                      user=conf.postgres.user_name,
+                      password=conf.postgres.password,
+                      host=conf.postgres.host)
+    prompt = Prompt()
 
     saison_year = prompt.get_saison_year()
     match_day = prompt.get_match_day()
+    print('Saison %s and matchday %s', (saison_year, match_day))
 
-    with conn.cursor() as cur:
-        if datacon.check_if_spieltag_and_saison_already_exists(cur=cur, jahr=saison_year, spieltag=match_day):
+
+    with datacon.connect() as con:
+        cur = con.cursor()
+
+        if datacon.match_day_already_exists(cur=cur, saison=saison_year, match_day=match_day):
             # @TODO Logging
             print('"Spieltag" in this saison already exists in database')
             exit()
         try:
-            tips = get_bundesliga_tips(conf=conf)
-            print(tips)
-            safe_bundesliga_tips_into_db(tips)
+            tipps = get_bundesliga_tipps(conf=conf, prompt=prompt)
+            print(tipps)
+            datacon.safe_match_day_into_db(cur=cur, tipps_string=tipps)
+
         except Exception as e:
             print('Skript konnte nicht erfolgreich ausgeführt werden: ')
             print(e)
 
+def main():
+    generate()
+
 if __name__ == "__main__":
-    main()
     main()
