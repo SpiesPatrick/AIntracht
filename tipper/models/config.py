@@ -32,7 +32,7 @@ class Config(BaseModel):
 
 def load_config() -> Config:
     script_path = Path(__file__).resolve()
-    project_root = script_path.parent.parent
+    project_root = script_path.parent.parent.parent
     config_path = project_root / 'config.yaml'
 
     with open(config_path, 'r') as f:
