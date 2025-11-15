@@ -20,7 +20,7 @@ def send():
                       password=conf.postgres.password,
                       host=conf.postgres.host)
 
-    with (sync_playwright(), datacon.connect()) as (p, con):
+    with sync_playwright() as p, datacon.connect() as con:
         cur = con.cursor()
 
         # Load config
