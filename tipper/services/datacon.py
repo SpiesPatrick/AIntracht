@@ -46,6 +46,17 @@ class Datacon:
                 spieltag
             ))
 
+    def get_current_matches(self, cur, saison: int, match_day: int):
+        '''
+        Hole die Daten des Spieltags
+        '''
+        cur.execute('''
+        SELECT * FROM aintracht.begegnungen b
+        WHERE b.saison = %s AND b.spieltag = %s;
+        ''', (saison, match_day))
+        tipps = cur.fetchall()
+        return tipps
+
     def match_day_already_exists(self, cur, saison: int, match_day: int) -> bool:
         '''
         Überprüfe ob bereits ein Tipp in der Datenbank hinterlegt wurde.
@@ -59,3 +70,17 @@ class Datacon:
         ''', (saison, match_day))
         exists = cur.fetchone()[0]
         return exists
+
+    def match_day_already_tipped(self, cur, saison: int, match_day: int) -> bool:
+        '''
+        Überprüfe ob bereits getippt wurde für den hinterlegten Spieltag
+        '''
+        cur.execute('''
+        SELECT spiele.getippt
+        FROM aintracht.spiele spiele
+        WHERE spiele.saison = %s
+        AND spiele.spieltag = %s
+        LIMIT 1;
+        ''', (saison, match_day))
+        tipped = cur.fetchone()[0]
+        return tipped
