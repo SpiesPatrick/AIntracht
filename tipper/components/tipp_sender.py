@@ -1,39 +1,60 @@
 
-import re
 import time
 
-import models.config as conf
-import models.tipps as gen_tipps
-import yaml
+from models import config, tipps
 from playwright.sync_api import expect, sync_playwright
+from services.datacon import Datacon
+from services.prompt import Prompt
 
 
 def send():
-    with sync_playwright() as p:
-        browser = p.chromium.launch(headless=False) # True =^ unsichtbar
-        page = browser.new_page()
+    try:
+        conf = config.load_config()
+    except e:
+        print('Unable to load config: Abort')
+        print(e)
+        exit()
 
+    datacon = Datacon(dbname=conf.postgres.db_name,
+                      user=conf.postgres.user_name,
+                      password=conf.postgres.password,
+                      host=conf.postgres.host)
+
+    with (sync_playwright(), datacon.connect()) as (p, con):
+        cur = con.cursor()
 
         # Load config
         try:
-            config = conf.load_config()
-            E_MAIL = config.user.e_mail
-            PASSWORD = config.user.password
-            GROUPNAME = config.kicktipp.group_name
-            SAISON_ID = config.kicktipp.saison_id
+            E_MAIL = conf.user.e_mail
+            PASSWORD = conf.user.password
+            GROUPNAME = conf.kicktipp.group_name
+            SAISON_ID = conf.kicktipp.saison_id
+            HEADLESS = conf.kicktipp.headless
         except Exception as e:
             print('Failed to load config')
             return
 
+        prompt = Prompt()
+
+        saison_year = prompt.get_saison_year()
+        match_day = prompt.get_match_day()
+
+        if tipping_is_unnecessary(datacon=datacon, cur=cur, saison=saison_year, match_day=match_day):
+            exit()
+        browser = p.chromium.launch(headless=HEADLESS) # True =^ unsichtbar
+        page = browser.new_page()
+
         # Load Tipps
+
+        matches = datacon.get_current_matches(cur=cur, saison=saison_year, match_day=match_day)
         try:
-            tipps = gen_tipps.load_tipp()
+            tipps_ = tipps.form_yaml(matches)
         except Exception as e:
             print('Failed to load tipps')
             return
 
-        print(tipps)
-        SPIELE = max(tipps.saison.spiele, key=lambda s: s.spieltag)
+        print(tipps_)
+        SPIELE = max(tipps_.saison.spiele, key=lambda s: s.spieltag)
         SPIELTAG = SPIELE.spieltag
         print(f'current spieltag is {SPIELTAG}')
 
@@ -106,6 +127,16 @@ def send():
             'Die Tipps wurden erfolgreich gespeichert.',
             'Es wurden keine Änderungen gespeichert! Es wurden die gleichen Daten übermittelt, die bereits gespeichert sind.'
         ])
+        print('Tipping was successfull')
+
+def tipping_is_unnecessary(datacon: Datacon, cur, saison, match_day):
+    if not datacon.match_day_already_exists(cur=cur, saison=saison, match_day=match_day):
+        print('No matchday in database')
+        return True
+    if datacon.match_day_already_tipped(cur=cur, saison=saison, match_day=match_day):
+        print('Already tipped for current matchday')
+        return True
+    return False
 
 def sortBySpieltag(e):
   return e.spieltag
