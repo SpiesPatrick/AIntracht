@@ -20,7 +20,7 @@ class Spiele(BaseModel):
 class Tipps(BaseModel):
     spiele: Spiele
 
-def load_tipp() -> Tipps:
+def load_tipp_from_yamlfile() -> Tipps:
     script_path = Path(__file__).resolve()
     project_root = script_path.parent.parent
     tipps_path = project_root / 'tipps.yaml'
@@ -29,9 +29,28 @@ def load_tipp() -> Tipps:
         data = yaml.safe_load(f)
     return Tipps(**data)
 
+# convert db to yaml
+def form_yaml(tipps, saison, match_day) -> Tipps:
+    begegnungen = [Begegnungen(
+        heim_mannschaft=r[0],
+        gast_mannschaft=r[1],
+        heim_tore=r[2],
+        gast_tore=r[3]
+
+    ) for r in tipps]
+
+    spiele = Spiele(
+        begegnungen=begegnungen,
+        saison=saison,
+        spieltag=match_day,
+    )
+
+    return Tipps(spiele=spiele)
+
 def convert_yaml(obj) -> Tipps:
     data = yaml.safe_load(obj)
     return Tipps(**data)
     # Old way as Backup
     # yaml_string = yaml.dump(data=obj)
+    # return Tipps(**obj)
     # return Tipps(**obj)
