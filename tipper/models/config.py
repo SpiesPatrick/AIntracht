@@ -12,6 +12,7 @@ class User(BaseModel):
 class Kicktipp(BaseModel):
     group_name: str
     saison_id: str
+    headless: bool
 
 class Gemini(BaseModel):
     api_key: str
