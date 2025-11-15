@@ -1,5 +1,4 @@
 
-import json
 from datetime import datetime
 
 import requests
@@ -129,5 +128,4 @@ class Prompt:
         print(prompt)
 
     if __name__ == '__main__':
-        main()
         main()

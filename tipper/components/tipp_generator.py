@@ -1,8 +1,5 @@
 
 import google.generativeai as genai
-import yaml
-# from google.generativeai.types import HarmCategory
-# import pythonmodules.config as config
 from models import config
 from services.datacon import Datacon
 from services.prompt import Prompt
@@ -68,8 +65,7 @@ def generate():
 
     saison_year = prompt.get_saison_year()
     match_day = prompt.get_match_day()
-    print('Saison %s and matchday %s', (saison_year, match_day))
-
+    # @TODO Insert logging with current saison and matchday
 
     with datacon.connect() as con:
         cur = con.cursor()
