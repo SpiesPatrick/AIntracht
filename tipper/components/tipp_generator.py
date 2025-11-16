@@ -5,7 +5,7 @@ from services.datacon import Datacon
 from services.prompt import Prompt
 
 
-def get_bundesliga_tipps(conf: config.Config, prompt: Prompt):
+def get_bundesliga_tipps(conf: config.Config, prompt: Prompt, saison: int, match_day: int):
     api_key = conf.gemini.api_key
     if not api_key:
         raise ValueError('GEMINI_API_KEY wurde nicht in der Config gefunden.')
@@ -37,7 +37,11 @@ def get_bundesliga_tipps(conf: config.Config, prompt: Prompt):
         if text.startswith('```yaml'):
             text = text.strip('```yaml').strip()
 
-        tipps = text
+        tipps = 'spiele:\n' \
+        f'  saison: {saison}\n' \
+        f'  spieltag: {match_day}\n' \
+
+        tipps = tipps + '  ' + text
 
     except AttributeError:
         print('Konnte nicht auf .text zugreifen. Möglicherweise wurde die Anfrage blockiert.')
@@ -73,9 +77,9 @@ def generate():
         if datacon.match_day_already_exists(cur=cur, saison=saison_year, match_day=match_day):
             # @TODO Logging
             print('"Spieltag" in this saison already exists in database')
-            exit()
+            return
         try:
-            tipps = get_bundesliga_tipps(conf=conf, prompt=prompt)
+            tipps = get_bundesliga_tipps(conf=conf, prompt=prompt, saison=saison_year, match_day=match_day)
             print(tipps)
             datacon.safe_match_day_into_db(cur=cur, tipps_string=tipps)
 

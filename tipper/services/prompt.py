@@ -97,10 +97,7 @@ class Prompt:
                 '\n' \
                 'Das YAML soll so aufgebaut sein:\n' \
                 '\n' \
-                'spiele:\n' \
-                '  saison: 2025 # Unbedingt als Integer angeben! Lautet die Saison "25/26", so nimmst du die kleinere Zahl, also 2025 \n' \
-                '  spieltag: 3 # Unbedingt als Integer angeben!\n' \
-                '  begegnungen:\n' \
+                'begegnungen:\n' \
                 '  - heim_mannschaft: "FC Bayern München" # Name der Heimmannschaft\n' \
                 '    gast_mannschaft: "Werder Bremen" # Name der Gastmannschaft\n' \
                 '    heim_tore: 0 # Unbedingt als Integer angeben!\n' \
