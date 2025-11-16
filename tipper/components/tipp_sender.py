@@ -32,6 +32,7 @@ def send():
             HEADLESS = conf.kicktipp.headless
         except Exception as e:
             print('Failed to load config')
+            print(e)
             return
 
         prompt = Prompt()
@@ -48,13 +49,14 @@ def send():
 
         matches = datacon.get_current_matches(cur=cur, saison=saison_year, match_day=match_day)
         try:
-            tipps_ = tipps.form_yaml(matches)
+            tipps_ = tipps.form_yaml(matches=matches, match_day=match_day, saison=saison_year)
         except Exception as e:
             print('Failed to load tipps')
+            print(e)
             return
 
         print(tipps_)
-        SPIELE = max(tipps_.saison.spiele, key=lambda s: s.spieltag)
+        SPIELE = tipps_.spiele
         SPIELTAG = SPIELE.spieltag
         print(f'current spieltag is {SPIELTAG}')
 
@@ -123,10 +125,7 @@ def send():
         4) Submit und check if saved
         '''
         page.get_by_role('button', name='Tipps speichern').click()
-        expect(page.get_by_role('paragraph')).to_contain_text([
-            'Die Tipps wurden erfolgreich gespeichert.',
-            'Es wurden keine Änderungen gespeichert! Es wurden die gleichen Daten übermittelt, die bereits gespeichert sind.'
-        ])
+        expect(page.get_by_role('paragraph')).to_contain_text(['Die Tipps wurden erfolgreich gespeichert.'])
         print('Tipping was successfull')
 
 def tipping_is_unnecessary(datacon: Datacon, cur, saison, match_day):

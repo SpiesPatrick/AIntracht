@@ -30,14 +30,14 @@ def load_tipp_from_yamlfile() -> Tipps:
     return Tipps(**data)
 
 # convert db to yaml
-def form_yaml(tipps, saison, match_day) -> Tipps:
+def form_yaml(matches, saison, match_day) -> Tipps:
     begegnungen = [Begegnungen(
-        heim_mannschaft=r[0],
-        gast_mannschaft=r[1],
-        heim_tore=r[2],
-        gast_tore=r[3]
+        heim_mannschaft=r['heim_mannschaft'],
+        gast_mannschaft=r['gast_mannschaft'],
+        heim_tore=r['heim_tore'],
+        gast_tore=r['gast_tore']
 
-    ) for r in tipps]
+    ) for r in matches]
 
     spiele = Spiele(
         begegnungen=begegnungen,
