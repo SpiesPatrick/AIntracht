@@ -1,5 +1,6 @@
 import psycopg2
 from models import tipps
+from psycopg2.extras import RealDictCursor
 
 
 class Datacon:
@@ -12,7 +13,13 @@ class Datacon:
         self.port = port
 
     def connect(self):
-        return  psycopg2.connect(dbname=self.dbname, user=self.user, password=self.password, host=self.host, port=self.port)
+        return  psycopg2.connect(
+            dbname=self.dbname,
+            user=self.user,
+            password=self.password,
+            host=self.host,
+            port=self.port,
+            cursor_factory=RealDictCursor)
 
     def safe_match_day_into_db(self, cur, tipps_string):
         tipps_yaml = tipps.convert_yaml(tipps_string)
@@ -68,7 +75,7 @@ class Datacon:
             AND spiele.spieltag = %s
         );
         ''', (saison, match_day))
-        exists = cur.fetchone()[0]
+        exists = cur.fetchone()['exists']
         return exists
 
     def match_day_already_tipped(self, cur, saison: int, match_day: int) -> bool:
@@ -82,5 +89,5 @@ class Datacon:
         AND spiele.spieltag = %s
         LIMIT 1;
         ''', (saison, match_day))
-        tipped = cur.fetchone()[0]
+        tipped = cur.fetchone()['getippt']
         return tipped
