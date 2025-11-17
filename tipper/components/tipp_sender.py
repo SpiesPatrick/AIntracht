@@ -92,7 +92,7 @@ def send():
         '''
         3) Filling the tips
         '''
-        rows = page.locator('table#tippabgabeSpiele tbody tr.datarow' )
+        rows = page.locator('table#tippabgabeSpiele tbody tr.datarow')
 
         count = rows.count()
 
