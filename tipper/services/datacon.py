@@ -91,3 +91,12 @@ class Datacon:
         ''', (saison, match_day))
         tipped = cur.fetchone()['getippt']
         return tipped
+
+    def set_match_day_tipped(self, cur, saison: int, match_day: int):
+        '''
+        Markiere den aktuellen Spieltag als getippt
+        '''
+        cur.execute('''
+        UPDATE aintracht.spiele SET getippt=true
+        WHERE saison = %s AND spieltag = %s;
+        ''', (saison, match_day))
