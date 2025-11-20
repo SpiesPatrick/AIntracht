@@ -1,4 +1,5 @@
 
+import re
 import time
 
 from models import config, tipps
@@ -125,8 +126,10 @@ def send():
         4) Submit und check if saved
         '''
         page.get_by_role('button', name='Tipps speichern').click()
-        expect(page.get_by_role('paragraph')).to_contain_text(['Die Tipps wurden erfolgreich gespeichert.'])
+        expect(page.locator('#kicktipp-content')).to_contain_text(re.compile('Die Tipps wurden erfolgreich gespeichert.|Es wurden keine Änderungen gespeichert! Es wurden die gleichen Daten übermittelt, die bereits gespeichert sind.'))
+        datacon.set_match_day_tipped(cur=cur, saison=saison_year, match_day=match_day)
         print('Tipping was successfull')
+
 
 def tipping_is_unnecessary(datacon: Datacon, cur, saison, match_day):
     if not datacon.match_day_already_exists(cur=cur, saison=saison, match_day=match_day):
