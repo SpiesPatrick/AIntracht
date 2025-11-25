@@ -1,64 +1,8 @@
-
-from datetime import datetime
-
-import requests
 import yaml
+from services.open_api import OpenApi
 
 
 class Prompt:
-
-    def get_saison_year(self):
-        '''
-        calculating the current saison year
-        '''
-        return datetime.now().year if datetime.now().month >= 7 else datetime.now().year - 1
-
-    def get_match_day(self):
-        '''
-        get the current matchday
-        '''
-        response = requests.get('https://api.openligadb.de/getmatchdata/bl1')
-        return response.json()[0]['group']['groupOrderID']
-
-    def get_table(self):
-        '''
-        return a json or yaml (not sure yet) of the actual table situation
-        '''
-        year = self.get_saison_year()
-        response = requests.get(f'https://api.openligadb.de/getbltable/bl1/{year}')
-        data = response.json()
-        reduced_data = [
-            {
-                'team': item.get('teamName'),
-                'punkte': item.get('points'),
-                'siege': item.get('won'),
-                'niederlagen': item.get('lost'),
-                'unentschieden': item.get('draw'),
-                'tore_geschossen': item.get('goals'),
-                'tore_gegner': item.get('opponentsGoals'),
-                'tordifferenz': item.get('goalDiff')
-            }
-            for item in data
-        ]
-        return yaml.dump(data=reduced_data, indent=2)
-
-    def get_match_day_data(self):
-        '''
-        return integer representing the next matchday
-        '''
-        response = requests.get('https://api.openligadb.de/getmatchdata/bl1')
-        data = response.json()
-        reduced_data = {
-            'spieltag': data[0]['group']['groupOrderID'],
-            'begegnungen': [
-                {
-                    'heim_mannschaft': item.get('team1').get('teamName'),
-                    'gast_mannschaft': item.get('team2').get('teamName')
-                }
-                for item in data
-            ]
-        }
-        return reduced_data
 
     def get_team_names(self):
         '''
@@ -87,11 +31,13 @@ class Prompt:
         '''
         return the complete prompt
         '''
-        match_day_data = self.get_match_day_data()
+        api = OpenApi()
+
+        match_day_data = api.get_match_day_data()
         match_day = match_day_data.get('spieltag')
         match_day_games = yaml.dump(data=match_day_data.get('begegnungen'), indent=2)
         team_names = self.get_team_names()
-        table = self.get_table()
+        table = api.table
 
         return f'Gib mir bitte die Tipps für den {match_day}. Spieltag der 1. Bundesliga im YAML-Format.\n' \
                 '\n' \
@@ -120,9 +66,10 @@ class Prompt:
                 '- Team-Namen exakt so wie oben in der Liste (keine Variationen, egal was in der Tabelle oder im Match-Day steht!!!).\n' \
                 '\n' \
 
-    def main(self):
-        prompt = self.generate_prompt()
-        print(prompt)
+def main():
+    prompt_class = Prompt()
+    prompt = prompt_class.generate_prompt()
+    print(prompt)
 
-    if __name__ == '__main__':
-        main()
+if __name__ == '__main__':
+    main()
