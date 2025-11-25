@@ -71,8 +71,8 @@ class OpenApi:
             year = self.year
         return requests.get(f'https://api.openligadb.de/getbltable/bl1/{year}')
 
-    def main(self):
-        pass
+def main():
+    pass
 
-    if __name__ == '__main__':
-        main()
+if __name__ == '__main__':
+    main()
