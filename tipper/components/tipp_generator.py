@@ -2,6 +2,7 @@
 import google.generativeai as genai
 from models import config
 from services.datacon import Datacon
+from services.open_api import OpenApi
 from services.prompt import Prompt
 
 
@@ -66,9 +67,10 @@ def generate():
                       password=conf.postgres.password,
                       host=conf.postgres.host)
     prompt = Prompt()
+    open_api = OpenApi()
 
-    saison_year = prompt.get_saison_year()
-    match_day = prompt.get_match_day()
+    saison_year = open_api.get_saison_year()
+    match_day = open_api.get_match_day()
     # @TODO Insert logging with current saison and matchday
 
     with datacon.connect() as con:

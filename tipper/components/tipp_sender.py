@@ -5,7 +5,7 @@ import time
 from models import config, tipps
 from playwright.sync_api import expect, sync_playwright
 from services.datacon import Datacon
-from services.prompt import Prompt
+from services.open_api import OpenApi
 
 
 def send():
@@ -36,10 +36,10 @@ def send():
             print(e)
             return
 
-        prompt = Prompt()
+        open_api = OpenApi()
 
-        saison_year = prompt.get_saison_year()
-        match_day = prompt.get_match_day()
+        saison_year = open_api.get_saison_year()
+        match_day = open_api.get_match_day()
 
         if tipping_is_unnecessary(datacon=datacon, cur=cur, saison=saison_year, match_day=match_day):
             exit()
@@ -102,10 +102,6 @@ def send():
             heim = row.locator('.nw.cell.col1').inner_text()
             gast = row.locator('.nw.cell.col2').inner_text()
 
-            '''
-            TODO hier muss ich die Tipps/Tore aus meinem YAML auslesen
-            und richtig definieren
-            '''
             tore_heim = None
             tore_gast = None
 
