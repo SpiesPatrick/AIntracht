@@ -7,7 +7,11 @@ class Logger:
 
     def __inti__(self):
         FORMAT = '%(asctime)s | %(user)s | %(levelname)s : %(message)s'
-        logging.basicConfig(filename='INSERT_FILENAME_HERE', format=FORMAT, level=logging.INFO)
+        logging.basicConfig(
+            filename='INSERT_FILENAME_HERE',
+            format=FORMAT,
+            level=logging.INFO
+        )
 
     def info(self, log):
         logger.info(log)
