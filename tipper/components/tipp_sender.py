@@ -1,4 +1,4 @@
-
+import logging
 import re
 import time
 
@@ -7,13 +7,14 @@ from playwright.sync_api import expect, sync_playwright
 from services.datacon import Datacon
 from services.open_api import OpenApi
 
+logger = logging.getLogger(__name__)
 
 def send():
     try:
         conf = config.load_config()
     except e:
-        print('Unable to load config: Abort')
-        print(e)
+        logger.error('Unable to load config: Abort')
+        logger.error(e)
         exit()
 
     datacon = Datacon(dbname=conf.postgres.db_name,
@@ -32,8 +33,8 @@ def send():
             SAISON_ID = conf.kicktipp.saison_id
             HEADLESS = conf.kicktipp.headless
         except Exception as e:
-            print('Failed to load config')
-            print(e)
+            logger.error('Failed to load config')
+            logger.error(e)
             return
 
         open_api = OpenApi()
@@ -52,14 +53,14 @@ def send():
         try:
             tipps_ = tipps.form_yaml(matches=matches, match_day=match_day, saison=saison_year)
         except Exception as e:
-            print('Failed to load tipps')
-            print(e)
+            logger.error('Failed to load tipps')
+            logger.error(e)
             return
 
-        print(tipps_)
+        logger.debug(tipps_)
         SPIELE = tipps_.spiele
         SPIELTAG = SPIELE.spieltag
-        print(f'current spieltag is {SPIELTAG}')
+        logger.debug(f'current spieltag is {SPIELTAG}')
 
         page.goto(f'https://www.kicktipp.de/{GROUPNAME}/')
 
@@ -80,7 +81,7 @@ def send():
         try:
             page.locator("iframe[title=\"SP Consent Message\"]").content_frame.get_by_role("button", name="Akzeptieren und weiter").click()
         except Exception:
-            print('No I-Frame found')
+            logger.info('No I-Frame found')
         # page.get_by_role("link", name="Tippabgabe").click()
         page.goto(f'https://www.kicktipp.de/{GROUPNAME}/tippabgabe?tippsaisonId={SAISON_ID}&spieltagIndex={SPIELTAG}')
 
@@ -88,7 +89,7 @@ def send():
         try:
             page.locator("iframe[title=\"SP Consent Message\"]").content_frame.get_by_role("button", name="Akzeptieren und weiter").click()
         except Exception:
-            print('No I-Frame found')
+            logger.info('No I-Frame found')
 
         '''
         3) Filling the tips
@@ -112,7 +113,7 @@ def send():
                     pass
 
             if tore_heim == None or tore_gast == None:
-                print(f'Could not match team for ${heim} or ${gast}')
+                logger.error(f'Could not match team for ${heim} or ${gast}')
                 return
 
             row.locator('input[name*="heimTipp"]').fill(str(tore_heim))
@@ -124,15 +125,15 @@ def send():
         page.get_by_role('button', name='Tipps speichern').click()
         expect(page.locator('#kicktipp-content')).to_contain_text(re.compile('Die Tipps wurden erfolgreich gespeichert.|Es wurden keine Änderungen gespeichert! Es wurden die gleichen Daten übermittelt, die bereits gespeichert sind.'))
         datacon.set_match_day_tipped(cur=cur, saison=saison_year, match_day=match_day)
-        print('Tipping was successfull')
+        logger.info('Tipping was successfull')
 
 
 def tipping_is_unnecessary(datacon: Datacon, cur, saison, match_day):
     if not datacon.match_day_already_exists(cur=cur, saison=saison, match_day=match_day):
-        print('No matchday in database')
+        logger.warning('No matchday in database')
         return True
     if datacon.match_day_already_tipped(cur=cur, saison=saison, match_day=match_day):
-        print('Already tipped for current matchday')
+        logger.info('Already tipped for current matchday')
         return True
     return False
 
