@@ -1,3 +1,4 @@
+import logging
 
 import google.generativeai as genai
 from models import config
@@ -5,6 +6,7 @@ from services.datacon import Datacon
 from services.open_api import OpenApi
 from services.prompt import Prompt
 
+logger = logging.getLogger(__name__)
 
 def get_bundesliga_tipps(conf: config.Config, prompt: Prompt, saison: int, match_day: int):
     api_key = conf.gemini.api_key
@@ -45,11 +47,12 @@ def get_bundesliga_tipps(conf: config.Config, prompt: Prompt, saison: int, match
         tipps = tipps + '  ' + text
 
     except AttributeError:
-        print('Konnte nicht auf .text zugreifen. Möglicherweise wurde die Anfrage blockiert.')
-        print('Komplette Antwort:', response)
+        logger.error('Konnte nicht auf .text zugreifen. Möglicherweise wurde die Anfrage blockiert.')
+        logger.error('Komplette Antwort:', response)
         raise ValueError('Kein valider Text in der Antwort gefunden.')
     except Exception as e:
-        print(f'Ein unerwarteter Fehler ist aufgetreten: {e}')
+        logger.error('Ein unerwarteter Fehler ist aufgetreten:')
+        logger.error(e)
         raise
 
     return tipps
@@ -58,8 +61,8 @@ def generate():
     try:
         conf = config.load_config()
     except e:
-        print('Unable to load config')
-        print(e)
+        logger.error('Unable to load config')
+        logger.error(e)
         exit()
 
     datacon = Datacon(dbname=conf.postgres.db_name,
@@ -71,23 +74,23 @@ def generate():
 
     saison_year = open_api.get_saison_year()
     match_day = open_api.get_match_day()
-    # @TODO Insert logging with current saison and matchday
+    logger.info(f'Saison year: {saison_year} | Matchday: {match_day}')
 
     with datacon.connect() as con:
         cur = con.cursor()
 
         if datacon.match_day_already_exists(cur=cur, saison=saison_year, match_day=match_day):
             # @TODO Logging
-            print('"Spieltag" in this saison already exists in database')
+            logger.info('"Spieltag" in this saison already exists in database')
             return
         try:
             tipps = get_bundesliga_tipps(conf=conf, prompt=prompt, saison=saison_year, match_day=match_day)
-            print(tipps)
+            logger.debug(f'Tipps: {tipps}')
             datacon.safe_match_day_into_db(cur=cur, tipps_string=tipps)
 
         except Exception as e:
-            print('Skript konnte nicht erfolgreich ausgeführt werden: ')
-            print(e)
+            logger.error('Skript konnte nicht erfolgreich ausgeführt werden: ')
+            logger.error(e)
 
 def main():
     generate()
