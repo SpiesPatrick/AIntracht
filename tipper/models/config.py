@@ -25,11 +25,18 @@ class Postgres(BaseModel):
     password: str
     host: str
 
+class Logging(BaseModel):
+    filepath: str
+    filename: str
+    format: str
+    level: str
+
 class Config(BaseModel):
     user: User
     kicktipp: Kicktipp
     gemini: Gemini
     postgres: Postgres
+    logging: Logging
 
 def load_config() -> Config:
     script_path = Path(__file__).resolve()
