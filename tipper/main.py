@@ -1,7 +1,12 @@
 from components import tipp_generator, tipp_sender
+from services import setup_logging as sl
 
 
 def main():
+    '''
+    Setup logging configuration
+    '''
+    sl.setup_logging()
 
     '''
     Check if tipps already safed in DB. If not:
