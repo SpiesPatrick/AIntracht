@@ -1,3 +1,4 @@
+
 import logging
 import re
 import time
@@ -42,7 +43,11 @@ def send():
         saison_year = open_api.get_saison_year()
         match_day = open_api.get_match_day()
 
-        if tipping_is_unnecessary(datacon=datacon, cur=cur, saison=saison_year, match_day=match_day):
+        if tipping_is_unnecessary(
+            datacon=datacon,
+            cur=cur,
+            saison=saison_year,
+            match_day=match_day):
             exit()
         browser = p.chromium.launch(headless=HEADLESS) # True =^ unsichtbar
         page = browser.new_page()
@@ -138,7 +143,7 @@ def tipping_is_unnecessary(datacon: Datacon, cur, saison, match_day):
     return False
 
 def sortBySpieltag(e):
-  return e.spieltag
+    return e.spieltag
 
 def main():
     send()
