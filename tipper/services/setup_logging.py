@@ -1,13 +1,26 @@
 import logging
 
+from models import config
+
 
 def setup_logging():
-    FORMAT = '%(asctime)s | %(levelname)s : %(message)s'
+    conf = config.load_config()
+    FILENAME = conf.logging.filename
+    FILEPATH = conf.logging.filepath
+    LEVEL = level(conf.logging.level)
+    FORMAT = conf.logging.format if conf.logging.format else '%(asctime)s | %(levelname)s : %(message)s'
     logging.basicConfig(
-        filename='/home/patrick/code_workspace/ai_ntracht/logs/tipper.log',
+        filename=FILEPATH + FILENAME,
         format=FORMAT,
-        level=logging.DEBUG
+        level=LEVEL
         )
+
+def level(loglevel):
+    match loglevel:
+        case 'debug': return logging.DEBUG
+        case 'info': return logging.INFO
+        case 'warn': return logging.WARNING
+        case 'error': return logging.ERROR
 
 def main():
     setup_logging()

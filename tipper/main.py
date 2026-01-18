@@ -1,7 +1,18 @@
-from components import tipp_generator, tipp_sender
+import logging
 
+from components import tipp_generator, tipp_sender
+from services import setup_logging as sl
+
+logger = logging.getLogger(__name__)
 
 def main():
+    '''
+    Setup logging configuration
+    '''
+    sl.setup_logging()
+
+    logger.info('-------------------------------')
+    logger.info('----- STARTING AI-NTRACHT -----')
 
     '''
     Check if tipps already safed in DB. If not:
@@ -16,6 +27,9 @@ def main():
       -> navigate through Kicktipp and tipp the shit out of hell
     '''
     tipp_sender.send()
+
+    logger.info('----- THE END -----------------')
+    logger.info('-------------------------------')
 
 if __name__ == '__main__':
     main()
