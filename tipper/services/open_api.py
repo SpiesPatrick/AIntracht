@@ -56,7 +56,7 @@ class OpenApi:
                 'niederlagen': item.get('lost'),
                 'unentschieden': item.get('draw'),
                 'tore_geschossen': item.get('goals'),
-                'tore_gegner': item.get('opponentsGoals'),
+                'tore_gegner': item.get('opponentGoals'),
                 'tordifferenz': item.get('goalDiff')
             }
             for item in table
