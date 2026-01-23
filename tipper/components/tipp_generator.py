@@ -80,7 +80,6 @@ def generate():
         cur = con.cursor()
 
         if datacon.match_day_already_exists(cur=cur, saison=saison_year, match_day=match_day):
-            # @TODO Logging
             logger.info('"Spieltag" in this saison already exists in database')
             return
         try:
