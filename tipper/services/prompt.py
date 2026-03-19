@@ -77,38 +77,19 @@ Bitte verwende die Namen in der folgenden Liste und matche gegebenenfalls den Na
 ***
 Deinen Tipp generierst du bereits als fertigen PostreSQL-Befehl, in folgender Form:
 
-INSERT INTO aintracht.begegnungen (id, heim_mannschaft, gast_mannschaft, heim_tore, gast_tore, saison, spieltag)
-VALUES(nextval('aintracht.begegnungen_id_seq'::regclass), '', '', 0, 0, 0, 0);
+INSERT INTO aintracht.begegnungen (heim_mannschaft, gast_mannschaft, heim_tore, gast_tore, saison, spieltag)
+SELECT v.heim_mannschaft, v.gast_mannschaft, v.heim_tore, v.gast_tore, {}, {match_day}
+
+VALUES(
+    'Name der Heimmannschaft',
+    'Name der Gastmannschaft',
+    0, # Tore der Heimmannschaft
+    0, # Tore der Gastmannschaft
+    0, # Saison
+    0 #
+),
+(...), (...)...;
 ***
-
-
-------------------------------------
-Gib mir bitte die Tipps für den {match_day}. Spieltag der 1. Bundesliga im YAML-Format.
-
-Das YAML soll so aufgebaut sein:
-
-begegnungen:
-  - heim_mannschaft: "FC Bayern München" # Name der Heimmannschaft
-    gast_mannschaft: "Werder Bremen" # Name der Gastmannschaft
-    heim_tore: 0 # Unbedingt als Integer angeben!
-    gast_tore: 2 # Unbedingt als Integer angeben!
-  - ...
-
-Die aktuelle Tabelle der 1. Bundesliga sieht wie folgt aus (YAML-Format):
-{table}
-
-Folgende Begegnungen gibt es am {match_day}. Spieltag:
-{match_day_games}
-
-Die sollte dir dazu dienen, die Leistungen der Teams einzuschätzen.
-
-Bitte verwende die Namen in der folgenden Liste und ersetze gegebenenfalls den Namen (keine Abweichungen, keine Kürzungen):
-teams:
-{team_names}
-
-Wichtige Punkte:
-- Alle Spiele des Spieltags müssen enthalten sein.
-- Team-Namen exakt so wie oben in der Liste (keine Variationen, egal was in der Tabelle oder im Match-Day steht!!!).
 '''
 
 def main():
