@@ -3,7 +3,6 @@ import yaml
 from models import config
 from services.open_api import OpenApi
 
-
 class Prompt:
 
     def __init__(self):
@@ -55,40 +54,72 @@ class Prompt:
 
         return f'''
 ***
-Deine Rolle ist es, den kommenden Spieltag in der Deutschen Bundesliga zu tippen.
+Deine Aufgabe ist es, den {match_day}. Spieltag der 1. Bundesliga zu tippen.
+Erstelle möglichst realistische Ergebnisse.
 ***
 
 ***
-Der kommende Spieltag ist der {match_day}. Spieltag der 1. Bundesliga der Herren
-und es finden folgende Begegnungen statt:
-{match_day_games}
+Nutze für deine Einschätzung insbesondere:
+
+- die aktuelle Tabellenposition
+- Heimvorteil
+- bisherige Saisonleistungen
+- Offensiv- und Defensivstärke
+- die aktuelle Form der Mannschaften, sofern bekannt
+
+Überraschungen sind erlaubt, sollten aber plausibel sein.
 ***
 
 ***
-Zur Orientierung folgt die aktuelle Tabelle der 1. Bundesliga:
+Die aktuelle Tabelle der Bundesliga:
+
 {table}
 ***
 
 ***
-Bitte verwende die Namen in der folgenden Liste und matche gegebenenfalls den Namen (keine Abweichungen, keine Kürzungen):
+Am {match_day}. Spieltag finden folgende Begegnungen statt:
+
+{match_day_games}
+***
+
+***
+Verwende in deiner Ausgabe ausschließlich die folgenden Teamnamen.
+
+Falls Mannschaften in der Tabelle oder den Begegnungen anders geschrieben sind,
+ersetze sie durch den entsprechenden Namen aus dieser Liste.
+
+teams:
 {team_names}
 ***
 
 ***
-Deinen Tipp generierst du bereits als fertigen PostreSQL-Befehl, in folgender Form:
+Gib ausschließlich gültiges YAML zurück.
 
-INSERT INTO aintracht.begegnungen (heim_mannschaft, gast_mannschaft, heim_tore, gast_tore, saison, spieltag)
-SELECT v.heim_mannschaft, v.gast_mannschaft, v.heim_tore, v.gast_tore, {}, {match_day}
+Das YAML muss exakt folgende Struktur besitzen:
 
-VALUES(
-    'Name der Heimmannschaft',
-    'Name der Gastmannschaft',
-    0, # Tore der Heimmannschaft
-    0, # Tore der Gastmannschaft
-    0, # Saison
-    0 #
-),
-(...), (...)...;
+begegnungen:
+  - heim_mannschaft: "FC Bayern München"
+    gast_mannschaft: "Werder Bremen"
+    heim_tore: 2
+    gast_tore: 1
+  - heim_mannschaft: "..."
+    gast_mannschaft: "..."
+    heim_tore: 0
+    gast_tore: 0
+***
+
+***
+Regeln:
+
+- Alle Begegnungen des Spieltags müssen enthalten sein.
+- Jede Begegnung darf genau einmal vorkommen.
+- Heim- und Gastmannschaft dürfen nicht vertauscht werden.
+- Die Mannschaftsnamen müssen exakt der oben angegebenen Liste entsprechen.
+- heim_tore und gast_tore müssen Integer sein.
+- Es dürfen keine weiteren Felder ausgegeben werden.
+- Gib ausschließlich das YAML zurück.
+- Gib keine Erklärungen.
+- Verwende keine Markdown-Codeblöcke.
 ***
 '''
 
