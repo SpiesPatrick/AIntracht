@@ -31,12 +31,16 @@ class Logging(BaseModel):
     format: str
     level: str
 
+class Daddy(BaseModel):
+    send_mail_to_daddy: bool
+    e_mail: str
 class Config(BaseModel):
     user: User
     kicktipp: Kicktipp
     gemini: Gemini
     postgres: Postgres
     logging: Logging
+    daddy: Daddy
 
 def load_config() -> Config:
     script_path = Path(__file__).resolve()
