@@ -40,7 +40,7 @@ def send():
 
         open_api = OpenApi()
 
-        saison_year = open_api.get_saison_year()
+        saison_year = open_api.get_season_year()
         match_day = open_api.get_match_day()
 
         if tipping_is_unnecessary(

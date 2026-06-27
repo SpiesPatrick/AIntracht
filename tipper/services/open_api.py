@@ -9,7 +9,7 @@ class OpenApi:
 
     def __init__(self):
         self.match_data = self.get_match_data()
-        self.year = self.get_saison_year()
+        self.year = self.get_season_year()
         self.table = self.get_table()
 
     def get_match_day_data(self):
@@ -30,7 +30,7 @@ class OpenApi:
         }
         return reduced_data
 
-    def get_saison_year(self):
+    def get_season_year(self):
         '''
         calculating the current saison year
         '''
@@ -56,7 +56,7 @@ class OpenApi:
                 'niederlagen': item.get('lost'),
                 'unentschieden': item.get('draw'),
                 'tore_geschossen': item.get('goals'),
-                'tore_gegner': item.get('opponentsGoals'),
+                'tore_gegner': item.get('opponentGoals'),
                 'tordifferenz': item.get('goalDiff')
             }
             for item in table
