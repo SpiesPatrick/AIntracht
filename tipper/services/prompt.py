@@ -3,6 +3,7 @@ import yaml
 from models import config
 from services.open_api import OpenApi
 
+
 class Prompt:
 
     def __init__(self):
@@ -22,9 +23,9 @@ class Prompt:
         return string with all team names, the way I want (and need) it
         '''
         return  '  - "Hamburger SV"\n' \
-                '  - "FC St. Pauli"\n' \
+                '  - "FC Schalke 04"\n' \
                 '  - "RB Leipzig"\n' \
-                '  - "1. FC Heidenheim 1846"\n' \
+                '  - "SV Elversberg"\n' \
                 '  - "VfB Stuttgart"\n' \
                 '  - "Bor. Mönchengladbach"\n' \
                 '  - "Werder Bremen"\n' \
@@ -33,7 +34,7 @@ class Prompt:
                 '  - "Eintracht Frankfurt"\n' \
                 '  - "FC Augsburg"\n' \
                 '  - "FC Bayern München"\n' \
-                '  - "VfL Wolfsburg"\n' \
+                '  - "SC Paderborn 07"\n' \
                 '  - "FSV Mainz 05"\n' \
                 '  - "Borussia Dortmund"\n' \
                 '  - "1. FC Union Berlin"\n' \
