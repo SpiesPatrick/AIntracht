@@ -8,6 +8,9 @@ class User(BaseModel):
     name: str
     e_mail: str
     password: str
+    mail_password: str
+    smtp_host: str
+    smtp_port: int
 
 class Kicktipp(BaseModel):
     group_name: str
@@ -34,6 +37,7 @@ class Logging(BaseModel):
 class Daddy(BaseModel):
     send_mail_to_daddy: bool
     e_mail: str
+
 class Config(BaseModel):
     user: User
     kicktipp: Kicktipp
