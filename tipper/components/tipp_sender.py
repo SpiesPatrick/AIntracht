@@ -6,6 +6,7 @@ import time
 from models import config, tipps
 from playwright.sync_api import expect, sync_playwright
 from services.datacon import Datacon
+from services.mail_sender import MailSend
 from services.open_api import OpenApi
 
 logger = logging.getLogger(__name__)
@@ -30,9 +31,14 @@ def send():
         try:
             E_MAIL = conf.user.e_mail
             PASSWORD = conf.user.password
+            MAIL_PASSWORD = conf.user.mail_password
+            SMTP_HOST = conf.user.smtp_host
+            SMTP_PORT = conf.user.smtp_port
             GROUPNAME = conf.kicktipp.group_name
             SAISON_ID = conf.kicktipp.saison_id
             HEADLESS = conf.kicktipp.headless
+            SEND_MAIL = conf.daddy.send_mail_to_daddy
+            DADDY_MAIL = conf.daddy.e_mail
         except Exception as e:
             logger.error('Failed to load config')
             logger.error(e)
@@ -131,6 +137,19 @@ def send():
         expect(page.locator('#kicktipp-content')).to_contain_text(re.compile('Die Tipps wurden erfolgreich gespeichert.|Es wurden keine Änderungen gespeichert! Es wurden die gleichen Daten übermittelt, die bereits gespeichert sind.'))
         datacon.set_match_day_tipped(cur=cur, saison=saison_year, match_day=match_day)
         logger.info('Tipping was successfull')
+
+        '''
+        5) Sending a mail to handsome Sugarpaddy
+        '''
+        if (SEND_MAIL):
+            mail_send = MailSend(
+                user_mail = E_MAIL,
+                user_passwort = MAIL_PASSWORD,
+                smtp_host = SMTP_HOST,
+                smtp_port = SMTP_PORT,
+                mail_to = DADDY_MAIL
+            )
+            mail_send.success_msg()
 
 
 def tipping_is_unnecessary(datacon: Datacon, cur, saison, match_day):
